@@ -237,20 +237,18 @@ void TIM2_IRQHandler(void) {
  * @param  None
  * @retval None
 */
-/* In order to manage TIM3_IRQHandler callback on us_sensor. L.Senaneuch commented this code section.
- */
 
-/*
 void TIM3_IRQHandler(void) {
     TIM_ITHandler(TIM3);
 }
-*/
+
 
 /**
  * @brief  Handles TIM4 interrupt request.
  * @param  None
  * @retval None
 */
+
 void TIM4_IRQHandler(void) {
     TIM_ITHandler(TIM4);
 }

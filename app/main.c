@@ -5,9 +5,10 @@
 #include "can.h"
 #include "direction.h"
 #include "us_sensors.h"
+volatile int i;
 
 int main(void) {
-	US_Trigger_Init();
-	
-  while (1){}
+		US_Trigger_Init();
+  while (1){
+	}
 }
