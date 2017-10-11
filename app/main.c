@@ -5,10 +5,13 @@
 #include "can.h"
 #include "direction.h"
 #include "us_sensors.h"
-volatile int i;
 
+uint16_t test;
 int main(void) {
-		US_Trigger_Init();
+	
+	US_QuickInit();
+	US_StartAcq();
   while (1){
+		test=(uint16_t)US_CalcDistance();
 	}
 }

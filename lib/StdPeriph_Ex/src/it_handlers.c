@@ -151,68 +151,68 @@ void ADC1_2_IRQHandler(void) {
 }
 
 
-/**
- * @brief  Handles DMA1_Channel1 interrupt request.
- * @param  None
- * @retval None
-*/
-void DMA1_Channel1_IRQHandler(void) {
-   DMA_IRQ_HANDLER(1, 1)
-}
+///**
+// * @brief  Handles DMA1_Channel1 interrupt request.
+// * @param  None
+// * @retval None
+//*/
+//void DMA1_Channel1_IRQHandler(void) {
+//   DMA_IRQ_HANDLER(1, 1)
+//}
 
-/**
- * @brief  Handles DMA1_Channel2 interrupt request.
- * @param  None
- * @retval None
-*/
-void DMA1_Channel2_IRQHandler(void) {
-   DMA_IRQ_HANDLER(1, 2)
-}
+///**
+// * @brief  Handles DMA1_Channel2 interrupt request.
+// * @param  None
+// * @retval None
+//*/
+//void DMA1_Channel2_IRQHandler(void) {
+//   DMA_IRQ_HANDLER(1, 2)
+//}
 
-/**
- * @brief  Handles DMA1_Channel3 interrupt request.
- * @param  None
- * @retval None
-*/
-void DMA1_Channel3_IRQHandler(void) {
-   DMA_IRQ_HANDLER(1, 3)
-}
+///**
+// * @brief  Handles DMA1_Channel3 interrupt request.
+// * @param  None
+// * @retval None
+//*/
+//void DMA1_Channel3_IRQHandler(void) {
+//   DMA_IRQ_HANDLER(1, 3)
+//}
 
-/**
- * @brief  Handles DMA1_Channel4 interrupt request.
- * @param  None
- * @retval None
-*/
-void DMA1_Channel4_IRQHandler(void) {
-   DMA_IRQ_HANDLER(1, 4)
-}
+///**
+// * @brief  Handles DMA1_Channel4 interrupt request.
+// * @param  None
+// * @retval None
+//*/
+//void DMA1_Channel4_IRQHandler(void) {
+//   DMA_IRQ_HANDLER(1, 4)
+//}
 
-/**
- * @brief  Handles DMA1_Channel5 interrupt request.
- * @param  None
- * @retval None
-*/
-void DMA1_Channel5_IRQHandler(void) {
-   DMA_IRQ_HANDLER(1, 5)
-}
+///**
+// * @brief  Handles DMA1_Channel5 interrupt request.
+// * @param  None
+// * @retval None
+//*/
+//void DMA1_Channel5_IRQHandler(void) {
+//   DMA_IRQ_HANDLER(1, 5)
+//}
 
-/**
- * @brief  Handles DMA1_Channel6 interrupt request.
- * @param  None
- * @retval None
-*/
-void DMA1_Channel6_IRQHandler(void) {
-   DMA_IRQ_HANDLER(1, 6)
-}
+///**
+// * @brief  Handles DMA1_Channel6 interrupt request.
+// * @param  None
+// * @retval None
+//*/
+//void DMA1_Channel6_IRQHandler(void) {
+//   DMA_IRQ_HANDLER(1, 6)
+//}
 
-/**
- * @brief  Handles DMA1_Channel7 interrupt request.
- * @param  None
- * @retval None
-*/
-void DMA1_Channel7_IRQHandler(void) {
-   DMA_IRQ_HANDLER(1, 7)
-}
+///**
+// * @brief  Handles DMA1_Channel7 interrupt request.
+// * @param  None
+// * @retval None
+//*/
+//void DMA1_Channel7_IRQHandler(void) {
+//   DMA_IRQ_HANDLER(1, 7)
+//}
 
 /**
  * @brief  Handles TIM1 up interrupt request.
