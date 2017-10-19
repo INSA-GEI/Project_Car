@@ -17,6 +17,10 @@
 #include "front_motor.h"
 #include "rear_motors.h"
 
+#include "us_sensors.h"
+
+#include "can.h"
+
 #include "data_interface.h"
 #include "mirroring.h"
 
@@ -38,6 +42,8 @@
  * @brief   Speed of the motors
 */
 float motor_speed = 0.0;
+uint16_t speedD;
+uint16_t speedG;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Public functions ----------------------------------------------------------*/
@@ -67,10 +73,14 @@ void Manager_Init(void) {
     
     SpeedSensor_QuickInit(SENSOR_L);
     SpeedSensor_QuickInit(SENSOR_R);
-
+		
     Mirroring_Init();
-    Mirroring_Start();
+    //Mirroring_Start();
+	
+	  US_QuickInit();
+		US_StartAcq();
     
+		CAN_QuickInit();
     System_Time_QuickInit();
 }
 
@@ -88,7 +98,7 @@ void Manager_Callback(void) {
           speed_cmd = pDataITF_PI->motor_prop;  
           RearMotors_setSpeed(speed_cmd);
         }
-        else if (pDataITF_PI->enable_motors_control != ENABLE) {
+        else{
             motor_speed = (float)(pDataITF_PI->motor_prop/100.0);
             Motor_setSpeed(REAR_MOTOR_R, motor_speed);
             Motor_setSpeed(REAR_MOTOR_L, motor_speed);
@@ -99,7 +109,7 @@ void Manager_Callback(void) {
           FrontMotor_turn (pDataITF_PI->motor_dir);
         }
         else if (pDataITF_PI->motor_dir != LEFT && pDataITF_PI->motor_dir != RIGHT) {
-            ;// do nothing
+            FrontMotor_turn(NONE);// do nothing
         }
         
     // SENSORS   
@@ -115,9 +125,6 @@ void Manager_Callback(void) {
         //motors current
        // pDataITF_STM->motor_current_R = ;
        // pDataITF_STM->motor_current_L = ;
-        Manager_remainingTimeInCommandPeriod = MANAGER_TIME_BETWEEN_TWO_UPDATES;
-
-
-            
+        Manager_remainingTimeInCommandPeriod = MANAGER_TIME_BETWEEN_TWO_UPDATES;  
     }
 }

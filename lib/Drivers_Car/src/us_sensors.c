@@ -6,16 +6,28 @@
  
 /* Includes ------------------------------------------------------------------*/
 #include "us_sensors.h"
+#include "common_constants.h"
 
+/*Data which will be set GPIO to trig US_Sensors*/
 uint16_t GPIO_BSRR[2] = {(1<<1)|(1<<3)|(1<<5), (1<<2)|(1<<4)|(1<<7)};
 uint16_t GPIO_BRR[2] = {(1<<2)|(1<<4)|(1<<7), (1<<1)|(1<<3)|(1<<5)};
 
+/*Data */
+/*
 uint16_t RISING_EDGE[6];
+uint16_t FALLING_EDGE[6];
+*/
+struct sensor sensors[6];
+
 
 uint16_t SENSORS_LEFT_DATA[6];
 uint16_t SENSORS_RIGHT_DATA[6];
 uint16_t SENSORS_CENTER_DATA[6];
 
+
+uint8_t EoCalibrationL = 0;
+uint8_t EoCalibrationR = 0;
+uint8_t EoCalibrationC = 0;
 
 /* Local Function*/
 
@@ -229,29 +241,24 @@ void US_TIM3_Echo_Init(uint8_t edge){
 			TIM_DMACmd(TIM3, TIM_DMA_CC3|TIM_DMA_CC4|TIM_DMA_CC1, ENABLE);	
 }
 
-float US_CalcDistance(void){
-	 uint16_t dif;
-	 float calc; 
-	 dif = SENSORS_LEFT_DATA[0] - RISING_EDGE[FRONT_LEFT];
-	 if(dif >0){
-		calc = dif * DISTANCE_COEF;
-	  return calc;
-	 }
-	 else{
-		return -1;
-	 }
+float US_CalcDistance(uint8_t sensor_position){
+	 return (sensors[sensor_position].COUNTER_DIFF * DISTANCE_COEF);
+	 
 }
 
 
 
 void US_QuickInit(void){
-		US_ClockEnable();
+	  EoCalibrationL = 0;
+	  EoCalibrationR = 0;
+	  EoCalibrationC = 0;
+	  US_ClockEnable();
 		US_GPIO_Configure();
 		US_NVIC_Configure();
 	  DMA_Configuration_Trig();
 		DMA_Configuration_Capture();
 		US_TIM4_Trig_Init();
-		US_TIM3_Echo_Init(Rising_Edge);
+		US_TIM3_Echo_Init(Falling_Edge);
 }
 
 
@@ -272,98 +279,135 @@ void US_StopAcq(void){
 
 
 
+/*Handler for right sensors*/
 void DMA1_Channel6_IRQHandler(void){  
-	 DMA_InitTypeDef DMA_InitStructure;
-	 DMA_Cmd(DMA1_Channel6, DISABLE);
-	 DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(TIM3->CNT);
-	 DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)SENSORS_CENTER_DATA;
-	 DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-	 DMA_InitStructure.DMA_BufferSize = 2;
-	 DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	 DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-	 DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-	 DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	 DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-	 DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-	 DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-   
-	 DMA_Init(DMA1_Channel6, &DMA_InitStructure);
-	 DMA_ITConfig(DMA1_Channel6, DMA_IT_TC, DISABLE);
-	 DMA_Cmd(DMA1_Channel3, ENABLE);
+	DMA_InitTypeDef DMA_InitStructure; 
+	if(EoCalibrationR == 0){
+		DMA_Cmd(DMA1_Channel6, DISABLE);
+		DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(TIM3->CNT);
+		DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)SENSORS_RIGHT_DATA;
+		DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+		DMA_InitStructure.DMA_BufferSize = 2;
+		DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+		DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+		DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+		DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+		DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+		DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+		DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
 		
-	 TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
-	 TIM_ICInitStructure.TIM_ICPolarity = Falling_Edge;
-	 TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
-	 TIM_ICInitStructure.TIM_ICPrescaler = 0;
-	 TIM_ICInitStructure.TIM_ICFilter = 0x0;
-	 TIM_ICInit(TIM3, &TIM_ICInitStructure);
+		DMA_Init(DMA1_Channel6, &DMA_InitStructure);
+		DMA_Cmd(DMA1_Channel6, ENABLE);
+		
+		TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
+		TIM_ICInitStructure.TIM_ICPolarity = Rising_Edge;
+		TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+		TIM_ICInitStructure.TIM_ICPrescaler = 0;
+		TIM_ICInitStructure.TIM_ICFilter = 0x0;
+		TIM_ICInit(TIM3, &TIM_ICInitStructure);
 	 
-	 RISING_EDGE[FRONT_CENTER] = SENSORS_RIGHT_DATA[4];
-	 RISING_EDGE[REAR_CENTER] = SENSORS_RIGHT_DATA[5];
+		sensors[FRONT_RIGHT].RISING_EDGE = SENSORS_RIGHT_DATA[4];
+		sensors[REAR_RIGHT].RISING_EDGE = SENSORS_RIGHT_DATA[5];
+			
+	  EoCalibrationR =1;
+		
+	}
+	else{
+		sensors[FRONT_RIGHT].FALLING_EDGE = SENSORS_RIGHT_DATA[0];
+		sensors[REAR_RIGHT].FALLING_EDGE = SENSORS_RIGHT_DATA[1];
 	
-	 DMA_ClearITPendingBit(DMA1_IT_GL6);
+		sensors[FRONT_RIGHT].COUNTER_DIFF = sensors[FRONT_RIGHT].FALLING_EDGE - sensors[FRONT_RIGHT].RISING_EDGE;
+		sensors[REAR_RIGHT].COUNTER_DIFF = sensors[REAR_RIGHT].FALLING_EDGE - sensors[REAR_RIGHT].RISING_EDGE;
+	}
+	
+	DMA_ClearITPendingBit(DMA1_IT_GL6);
 }
 
+/*Handler for Left sensors*/
 void DMA1_Channel2_IRQHandler(void){
    DMA_InitTypeDef DMA_InitStructure;
-	 DMA_Cmd(DMA1_Channel2, DISABLE);
-	 DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(TIM3->CNT);
-	 DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)SENSORS_LEFT_DATA;
-	 DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-	 DMA_InitStructure.DMA_BufferSize = 2;
-	 DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	 DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-	 DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-	 DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	 DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-	 DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-	 DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+	
+	 if(EoCalibrationL == 0){
+		 DMA_Cmd(DMA1_Channel2, DISABLE);
+		 DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(TIM3->CNT);
+		 DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)SENSORS_LEFT_DATA;
+	   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+	   DMA_InitStructure.DMA_BufferSize = 2;
+	   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+	   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+	   DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+	   DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+	   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
 
-	 DMA_Init(DMA1_Channel2, &DMA_InitStructure);
-	 DMA_ITConfig(DMA1_Channel2, DMA_IT_TC, DISABLE);
-	 DMA_Cmd(DMA1_Channel2, ENABLE);
+		 DMA_Init(DMA1_Channel2, &DMA_InitStructure);
+
+	   DMA_Cmd(DMA1_Channel2, ENABLE);
 	 
-	 TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
-	 TIM_ICInitStructure.TIM_ICPolarity = Falling_Edge;
-	 TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
-	 TIM_ICInitStructure.TIM_ICPrescaler = 0;
-	 TIM_ICInitStructure.TIM_ICFilter = 0x0;
-	 TIM_ICInit(TIM3, &TIM_ICInitStructure);
+	   TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
+	   TIM_ICInitStructure.TIM_ICPolarity = Rising_Edge;
+	   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+	   TIM_ICInitStructure.TIM_ICPrescaler = 0;
+	   TIM_ICInitStructure.TIM_ICFilter = 0x0;
+	   TIM_ICInit(TIM3, &TIM_ICInitStructure);
 	 
-	 RISING_EDGE[FRONT_LEFT] = SENSORS_LEFT_DATA[4];
-	 RISING_EDGE[REAR_LEFT] = SENSORS_LEFT_DATA[5];
+	   sensors[FRONT_LEFT].RISING_EDGE = SENSORS_LEFT_DATA[4];
+	   sensors[REAR_LEFT].RISING_EDGE = SENSORS_LEFT_DATA[5];
+		 EoCalibrationL=1;
+	 }
+	 else{
+		 sensors[FRONT_LEFT].FALLING_EDGE = SENSORS_LEFT_DATA[0];
+	   sensors[REAR_LEFT].FALLING_EDGE = SENSORS_LEFT_DATA[1];
+	 
+		 sensors[FRONT_LEFT].COUNTER_DIFF = sensors[FRONT_LEFT].FALLING_EDGE - sensors[FRONT_LEFT].RISING_EDGE;
+		 sensors[REAR_LEFT].COUNTER_DIFF = sensors[REAR_LEFT].FALLING_EDGE - sensors[REAR_LEFT].RISING_EDGE;
+	 }
+	
+	 
 	 DMA_ClearITPendingBit(DMA1_IT_GL2);
 }
 
+
+/*Handler for center sensors*/
 void DMA1_Channel3_IRQHandler(void){
-  
 	 DMA_InitTypeDef DMA_InitStructure;
-	 DMA_Cmd(DMA1_Channel3, DISABLE);
-	 DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(TIM3->CNT);
-	 DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)SENSORS_CENTER_DATA;
-	 DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-	 DMA_InitStructure.DMA_BufferSize = 2;
-	 DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-	 DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-	 DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-	 DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	 DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-	 DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-	 DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+	 if(EoCalibrationC == 0){
+		 DMA_Cmd(DMA1_Channel3, DISABLE);
+		 DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &(TIM3->CNT);
+		 DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)SENSORS_CENTER_DATA;
+	   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+	   DMA_InitStructure.DMA_BufferSize = 2;
+	   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+	   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+	   DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+	   DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+	   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
 	
-	 DMA_Cmd(DMA1_Channel3, ENABLE);
-	 DMA_Init(DMA1_Channel3, &DMA_InitStructure);
-	 DMA_ITConfig(DMA1_Channel3, DMA_IT_TC, DISABLE);
+	   DMA_Cmd(DMA1_Channel3, ENABLE);
+	   DMA_Init(DMA1_Channel3, &DMA_InitStructure);
 		
-	 TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
-	 TIM_ICInitStructure.TIM_ICPolarity = Falling_Edge;
-	 TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
-	 TIM_ICInitStructure.TIM_ICPrescaler = 0;
-	 TIM_ICInitStructure.TIM_ICFilter = 0x0;
-	 TIM_ICInit(TIM3, &TIM_ICInitStructure);
+  	 TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
+	   TIM_ICInitStructure.TIM_ICPolarity = Rising_Edge;
+	   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+	   TIM_ICInitStructure.TIM_ICPrescaler = 0;
+	   TIM_ICInitStructure.TIM_ICFilter = 0x0;
+	   TIM_ICInit(TIM3, &TIM_ICInitStructure);
+		 
+	   sensors[FRONT_CENTER].RISING_EDGE = SENSORS_CENTER_DATA[4];
+	   sensors[REAR_CENTER].RISING_EDGE = SENSORS_CENTER_DATA[5];
+		 EoCalibrationC =1;
+	 }
+	 else{
+		 sensors[FRONT_CENTER].FALLING_EDGE = SENSORS_CENTER_DATA[1];
+	   sensors[REAR_CENTER].FALLING_EDGE = SENSORS_CENTER_DATA[0];
+
+		 sensors[FRONT_CENTER].COUNTER_DIFF = sensors[FRONT_CENTER].FALLING_EDGE - sensors[FRONT_CENTER].RISING_EDGE;
+		 sensors[REAR_CENTER].COUNTER_DIFF = sensors[REAR_CENTER].FALLING_EDGE - sensors[REAR_CENTER].RISING_EDGE;
+	 }
 	 
-	 RISING_EDGE[FRONT_CENTER] = SENSORS_CENTER_DATA[4];
-	 RISING_EDGE[REAR_CENTER] = SENSORS_CENTER_DATA[5];
 	
 	 DMA_ClearITPendingBit(DMA1_IT_GL3);
 }

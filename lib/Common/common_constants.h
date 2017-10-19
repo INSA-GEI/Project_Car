@@ -207,6 +207,18 @@ typedef enum {
 */
 #define SS_L                        0x01
 
+/**
+ * @brief coef to convert counter value in cm
+ */
+#define DISTANCE_COEF								0.02621
+
+/* Position of US in array*/
+#define REAR_LEFT						0
+#define REAR_CENTER					1
+#define REAR_RIGHT					2
+#define FRONT_LEFT					3
+#define FRONT_CENTER				4
+#define FRONT_RIGHT					5
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

@@ -7,8 +7,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "system_time.h"
 #include "systick.h"
-#include "can.h" // added by L.Senaneuch
 
+#include "can.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -19,7 +19,7 @@
 */
 //static uint64_t time_millis;  // commented by L.S
 uint64_t time_millis; // added by L.S
-
+uint8_t cpt_envoie = 0;
 /* Private function prototypes -----------------------------------------------*/
 /* Public functions ----------------------------------------------------------*/
 
@@ -43,6 +43,7 @@ void System_Time_QuickInit(void) {
  * @retval  None
 */
 void SysTick_Callback(void) {
+		
     // Time increment 
     time_millis ++;
     
@@ -55,12 +56,25 @@ void SysTick_Callback(void) {
 		//if (time_millis % 10 == 0) {}
     
     // Other periodic functions (every 100 ms)
-    if (time_millis % 500 == 0 && CAN_ENABLE==ENABLE) {
-				//CAN_Send_Distance();
-				CAN_Send_Sensors();
-				CAN_Send_Speed();
+      if (time_millis % 100 == 0 && CAN_ENABLE==ENABLE) {
+				cpt_envoie++;
+				if(cpt_envoie == 1)
+					CAN_Send_Distance();
+				if (cpt_envoie==2)
+					CAN_Send_Speed();
+				if (cpt_envoie==3) 
+					CAN_Send_Front_US();
+				if ( cpt_envoie ==4)
+					CAN_Send_Rear_US();
+				if (cpt_envoie ==5)
+					CAN_Send_Wheel_Position();
+				if (cpt_envoie ==5){
+						CAN_Send_Rear_US();
+						cpt_envoie = 0;
+				}
+					
 		}
-    
+		    
     // Other periodic functions (every 1 s)
     //if (time_millis % 1000 == 0) {}
     

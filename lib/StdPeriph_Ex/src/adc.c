@@ -135,22 +135,22 @@ int ADC_QuickInit(ADC_TypeDef* ADCx, GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin_x, u
     } else {
 
         // Disable ADCx DMA
-        //ADC_DMACmd(ADCx, DISABLE);
+        ADC_DMACmd(ADCx, DISABLE);
         
         // Disable DMA
-        //DMA_Cmd(ADC2DMA_Channel(ADCx), DISABLE);
+        DMA_Cmd(ADC2DMA_Channel(ADCx), DISABLE);
         
         // Reset DMA counter
-        //DMA_SetCurrDataCounter(ADC2DMA_Channel(ADCx), ADC_NB_CHANNELS_MAX);
+        DMA_SetCurrDataCounter(ADC2DMA_Channel(ADCx), ADC_NB_CHANNELS_MAX);
         
         // Enable DMA
-        //DMA_Cmd(ADC2DMA_Channel(ADCx), ENABLE);
+        DMA_Cmd(ADC2DMA_Channel(ADCx), ENABLE);
     
         // Set ADC Conversion's sample time(channel, rank, sample time)
         ADC_RegularChannelConfig(ADCx, channelx, Rank, SampleTime);
 
         // Enable ADCx DMA
-        //ADC_DMACmd(ADCx, ENABLE);
+        ADC_DMACmd(ADCx, ENABLE);
     }
 
     return ADC_NO_ERROR;

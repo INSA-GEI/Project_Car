@@ -22,13 +22,14 @@
 
 /* STM32 INFORMATION DATA's ID */
 
-#define ID_POSITION									0x010
+#define ID_POSITION_OTHER						0x010
 
 #define ID_DISTANCE									0x020
 
 #define ID_SPEED										0x030
 
-#define ID_SENSORS									0x100
+#define ID_FRONT_US									0x100
+#define ID_REAR_US									0x110
 
 #define ID_MOTOR_CURRENT  					0x050
 
@@ -51,8 +52,8 @@ typedef union data_paquet data_paquet;
 union data_paquet
 {
     char stringMessage[8];
-    uint8_t byteMessage[8];
-    uint16_t intMessage[4];
+    int8_t byteMessage[8];
+    int16_t intMessage[4];
 		float floatMessage[2];
 };
 
@@ -68,6 +69,7 @@ void CAN_Rx_Callback(uint8_t size, int id, char * data) __attribute((weak));
 
 void CAN_Send_Distance(void);
 void CAN_Send_Speed(void);
-void CAN_Send_Sensors(void);
-
+void CAN_Send_Front_US(void);
+void CAN_Send_Rear_US(void);
+void CAN_Send_Wheel_Position(void);
 #endif /* CAN_H_ */

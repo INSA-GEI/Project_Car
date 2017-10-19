@@ -37,7 +37,7 @@
 /**
  * @brief Maximum number of channels for one ADC
 */ 
-#define ADC_NB_CHANNELS_MAX  16
+#define ADC_NB_CHANNELS_MAX  5
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

@@ -37,7 +37,7 @@
  * size: 19 bytes
  */
 typedef struct {
-   uint8_t ultrasonic_sensors[US_NUM]; /*!< Ultrasonic sensors data */
+   uint16_t ultrasonic_sensors[US_NUM]; /*!< Ultrasonic sensors data */
 
    uint8_t wheel_SENSOR_R;     /*!< position sensor data of right motor */
    uint8_t wheel_SENSOR_L;     /*!< position sensor data of left motor */

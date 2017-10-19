@@ -29,8 +29,7 @@ void Mirroring_Init(void) {
    pDataITF_PI  = (DataITF_PI_TypeDef  *)buffer_Rx;
    pDataITF_STM = (DataITF_STM_TypeDef *)buffer_Tx;
    DataITF_Init();
-   SPIComm_QuickInit((uint8_t *)buffer_Rx, (uint8_t *)buffer_Tx, BUFFER_RX_SIZE, BUFFER_TX_SIZE);
-	 CAN_QuickInit();
+   //SPIComm_QuickInit((uint8_t *)buffer_Rx, (uint8_t *)buffer_Tx, BUFFER_RX_SIZE, BUFFER_TX_SIZE);
 }
 
 /**

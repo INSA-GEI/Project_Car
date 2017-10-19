@@ -10,9 +10,10 @@
 
 
 #include "can.h"
-#include "gpio.h"
 #include "data_interface.h"
-#include "system_time.h"
+#include "common_constants.h"
+#include "us_sensors.h"
+
 
 /* Global Variable*/
 uint16_t counterCanMes = 0;
@@ -32,13 +33,33 @@ int can_error_transmit (int id, char *data);
 
 /* Public function */
 void CAN_QuickInit(void) {
-	
+	GPIO_InitTypeDef GPIO_InitStructure;
 	CAN_ClockEnable();
-	GPIO_QuickInit(GPIOB,GPIO_Pin_8,GPIO_Mode_IPU);
-	GPIO_QuickInit(GPIOB,GPIO_Pin_9,GPIO_Mode_AF_PP);
 	
+	/*
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+		
 	GPIO_PinRemapConfig(GPIO_Remap1_CAN1 , ENABLE); // A supprimer 
+	*/
 	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+		
 	
 	CAN_DeInit(CAN1);
 
@@ -83,14 +104,8 @@ void CAN_QuickInit(void) {
 }
 
 void USB_LP_CAN1_RX0_IRQHandler(void) {
-	if(counterCanMes < 120){
-		timeRcv[counterCanMes] = time_millis;
 		CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
-		counterCanMes++;
-	}
-	else{
-		CAN_Send(666,"FIN");
-	}
+		CAN_Rx_Callback(RxMessage.DLC, RxMessage.StdId, (char*)RxMessage.Data);
 }
 
 /*
@@ -132,8 +147,8 @@ void CAN_IT_Config(void){
 }
 
 void CAN_ClockEnable(void) {
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);// A DELETE DANS LE PROJET PRINCIPAL ?
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE); // A DELETE DANS LE PROJET PRINCIPAL ?
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);// A DELETE DANS LE PROJET PRINCIPAL ?
+	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE); // A DELETE DANS LE PROJET PRINCIPAL ?
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);
 }
 
@@ -155,8 +170,8 @@ int can_error_transmit (int id, char *data) {
 void CAN_Send_Speed(void)
 {
 			data_paquet paquet;	
-			paquet.floatMessage[0] = pDataITF_STM->wheel_speed_L;
-			paquet.floatMessage[1] = pDataITF_STM->wheel_speed_R;
+			//paquet.floatMessage[0] = pDataITF_STM->wheel_speed_L;
+			//paquet.floatMessage[1] = pDataITF_STM->wheel_speed_R;
 			CAN_Send(ID_SPEED, paquet.stringMessage);
 			
 }
@@ -169,32 +184,38 @@ void CAN_Send_Distance(void)
 			CAN_Send(ID_DISTANCE, paquet.stringMessage);
 }
 
-void CAN_Send_Sensors(void)
+void CAN_Send_Front_US(void)
 {
-	// Todo : Change array index by US contant in us_sensor.h
+			// Todo : Change array index by US contant in us_sensor.h
 			data_paquet paquet;			
-			paquet.byteMessage[0] = pDataITF_STM->ultrasonic_sensors[0];
-			paquet.byteMessage[1] = pDataITF_STM->ultrasonic_sensors[1];
-			paquet.byteMessage[2] = pDataITF_STM->ultrasonic_sensors[2];
-			paquet.byteMessage[3] = pDataITF_STM->ultrasonic_sensors[3];
-			paquet.byteMessage[4] = pDataITF_STM->ultrasonic_sensors[4];
-			paquet.byteMessage[5] = pDataITF_STM->ultrasonic_sensors[5];
-			paquet.byteMessage[6] = pDataITF_STM->battery_level;
-			paquet.byteMessage[7] = pDataITF_STM->steering_stop_sensor_L;
-			CAN_Send(ID_SENSORS, paquet.stringMessage);
+			paquet.intMessage[0] = sensors[FRONT_LEFT].COUNTER_DIFF;
+			paquet.intMessage[1] = sensors[FRONT_CENTER].COUNTER_DIFF;
+			paquet.intMessage[2] = sensors[FRONT_RIGHT].COUNTER_DIFF;
+			CAN_Send(ID_FRONT_US, paquet.stringMessage);
+}
+
+void CAN_Send_Rear_US(void)
+{
+			// Todo : Change array index by US contant in us_sensor.h
+			data_paquet paquet;			
+			paquet.intMessage[0] = sensors[REAR_LEFT].COUNTER_DIFF;
+			paquet.intMessage[1] = sensors[REAR_CENTER].COUNTER_DIFF;
+			paquet.intMessage[2] = sensors[REAR_RIGHT].COUNTER_DIFF;
+			CAN_Send(ID_REAR_US, paquet.stringMessage);
 }
 
 void CAN_Send_Wheel_Position(void){
 			data_paquet paquet;
 			paquet.byteMessage[0] = pDataITF_STM->wheel_SENSOR_L;
-			paquet.byteMessage[0] = pDataITF_STM->wheel_SENSOR_R;
-			CAN_Send(ID_POSITION, paquet.stringMessage);
+			paquet.byteMessage[1] = pDataITF_STM->wheel_SENSOR_R;
+			paquet.byteMessage[2] = pDataITF_STM->battery_level;
+			CAN_Send(ID_POSITION_OTHER, paquet.stringMessage);
 }
 
 void CAN_Send_Current(void){
 			data_paquet paquet;
 			paquet.byteMessage[0] = pDataITF_STM->motor_current_L;
-			paquet.byteMessage[0] = pDataITF_STM->motor_current_R;
+			paquet.byteMessage[1] = pDataITF_STM->motor_current_R;
 			CAN_Send(ID_MOTOR_CURRENT, paquet.stringMessage);
 }
 
@@ -208,7 +229,7 @@ void CAN_Rx_Callback(uint8_t size, int id, char * data) {
 				pDataITF_PI->motor_prop = paquet.intMessage[0];
 		}
 		else if (id == ID_MOTOR_DIR) {
-			pDataITF_PI->motor_dir = paquet.intMessage[0];
+			pDataITF_PI->motor_dir = paquet.byteMessage[0];
 			
 		}
 		else if(id == ID_MOTOR_ENABLE){

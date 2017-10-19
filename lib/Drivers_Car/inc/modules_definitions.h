@@ -49,7 +49,7 @@ typedef enum {
 /**
  * @brief       Number of the exti-line corresponding to the right hall sensor
 */
-#define SENSOR_R_LINE                      EXTI_Line8
+#define SENSOR_R_LINE                      EXTI_Line11
 
 /**
  * @brief       Number of the pin where the left hall sensor is plugged
@@ -59,7 +59,7 @@ typedef enum {
 /**
  * @brief       Number of the pin where the right hall sensor is plugged
 */
-#define SENSOR_R_PIN                       GPIO_Pin_8
+#define SENSOR_R_PIN                       GPIO_Pin_11
 
 /**
  * @brief       Pointer on the GPIO port interfacing the left hall sensor
@@ -224,7 +224,7 @@ typedef enum {
 /**
  * @brief       Pin used to enable the rear motor left
 */
-#define REAR_MOTOR_L_ENABLE_PIN                     GPIO_Pin_13
+#define REAR_MOTOR_L_ENABLE_PIN                     GPIO_Pin_10
 
 /**
  * @brief       Pin used to enable the rear motor right
@@ -239,32 +239,36 @@ typedef enum {
 /**
  * @brief   GPIO of the front motor's left direction sensor
  */
-#define HARD_STOP_GPIO_LEFT                         GPIOC
+#define HARD_STOP_GPIO_LEFT                         GPIOB
 
 /**
  * @brief   GPIO of the front motor's right direction sensor
  */
-#define HARD_STOP_GPIO_RIGHT                        GPIOC
+//#define HARD_STOP_GPIO_RIGHT                        GPIOB
 
 /**
  * @brief   GPIO pin of the front motor's left direction sensor
  */
-#define HARD_STOP_PIN_LEFT                          GPIO_Pin_10
+//#define HARD_STOP_PIN_LEFT                          GPIO_Pin_6
 
 /**
  * @brief   GPIO pin of the front motor's right direction sensor
  */
-#define HARD_STOP_PIN_RIGHT                         GPIO_Pin_11
+//#define HARD_STOP_PIN_RIGHT                         GPIO_Pin_7
 
-/**
- * @brief   EXTI_line of the front motor's left direction sensor
+
+/*
+ * Commented by L.Senaneuch - Reason : Hardware change with ADC to get direction
  */
-#define FRONT_LINE_LEFT                             EXTI_Line10
+///**
+// * @brief   DEPRECIATED - EXTI_line of the front motor's left direction sensor
+// */
+//#define FRONT_LINE_LEFT                             EXTI_Line10
 
-/**
- * @brief   EXTI_line of the front motor's right direction sensor
-*/
-#define FRONT_LINE_RIGHT                            EXTI_Line11
+///**
+// * @brief   DEPRECIATED - EXTI_line of the front motor's right direction sensor
+//*/
+//#define FRONT_LINE_RIGHT                            EXTI_Line11
 
 /**
  * @brief   EXTI_line rising signal
@@ -319,7 +323,7 @@ typedef enum {
 
 #define DIRECTION_ADC																ADC1
 
-#define DIRECTION_RANK															0x01
+#define DIRECTION_RANK															0x05
 
 #define DIRECTION_SAMPLING                          ADC_SampleTime_41Cycles5
 
@@ -328,37 +332,37 @@ typedef enum {
 /**
  * @brief   SPI used.
  */
-#define SPICOMM_SPIx                        SPI2
+//#define SPICOMM_SPIx                        SPI2
 
 /**
  * @brief   DMA used by the SPI
  */
-#define SPICOMM_SPIx_DMA                    DMA1
+//#define SPICOMM_SPIx_DMA                    DMA1
 
 /**
  * @brief   Channel DMA used by the SPI for reception
  */
-#define SPICOMM_SPIx_DMA_Rx_Channel         DMA1_Channel4
+//#define SPICOMM_SPIx_DMA_Rx_Channel         DMA1_Channel4
 
 /**
  * @brief   Channel DMA used by the SPI for transmission
  */
-#define SPICOMM_SPIx_DMA_Tx_Channel         DMA1_Channel5
+//#define SPICOMM_SPIx_DMA_Tx_Channel         DMA1_Channel5
 
 /**
  * @brief   Interupt of the DMA used by the SPI for reception
  */
-#define SPICOMM_SPIx_DMA_Rx_Channel_IRQn    DMA1_Channel4_IRQn
+//#define SPICOMM_SPIx_DMA_Rx_Channel_IRQn    DMA1_Channel4_IRQn
 
 /**
  * @brief   Interupt of the DMA used by the SPI for transmission
  */
-#define SPICOMM_SPIx_DMA_Tx_Channel_IRQn    DMA1_Channel5_IRQn
+//#define SPICOMM_SPIx_DMA_Tx_Channel_IRQn    DMA1_Channel5_IRQn
 
 /**
  * @brief   Priority of the DMA interrupts used by the SPI
  */
-#define SPICOMM_SPIx_DMA_PRIO               1
+//#define SPICOMM_SPIx_DMA_PRIO               1
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

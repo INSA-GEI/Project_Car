@@ -56,40 +56,40 @@ unsigned int error_crc_num = 0;
  * @param   buffer_Tx_size Size of buffer_Tx in bytes
  * @retval  None
  */
-void SPIComm_QuickInit(uint8_t * buffer_Rx, uint8_t * buffer_Tx, size_t buffer_Rx_size, size_t buffer_Tx_size) {
-    // Save buffers' adress and size
-    data_buffer_Rx_size = buffer_Rx_size;
-    data_buffer_Tx_size = buffer_Tx_size;
-    data_buffer_Rx = buffer_Rx;
-    data_buffer_Tx = buffer_Tx;
+//void SPIComm_QuickInit(uint8_t * buffer_Rx, uint8_t * buffer_Tx, size_t buffer_Rx_size, size_t buffer_Tx_size) {
+//    // Save buffers' adress and size
+//    data_buffer_Rx_size = buffer_Rx_size;
+//    data_buffer_Tx_size = buffer_Tx_size;
+//    data_buffer_Rx = buffer_Rx;
+//    data_buffer_Tx = buffer_Tx;
 
-   // Configure and enable DMA_Rx interrupt
-    NVIC_QuickInit(SPICOMM_SPIx_DMA_Rx_Channel_IRQn, SPICOMM_SPIx_DMA_PRIO);
-   // Configure and enable DMA_Tx interrupt
-    NVIC_QuickInit(SPICOMM_SPIx_DMA_Tx_Channel_IRQn, SPICOMM_SPIx_DMA_PRIO);
-    
-    // DMA configuration 
-    DMA_QuickInit_Buffer2Periph(SPICOMM_SPIx_DMA_Tx_Channel, 
-        (uint32_t)&SPICOMM_SPIx->DR,    DMA_PeripheralDataSize_Byte, 
-        (uint32_t)frame_buffer_Tx,      DMA_MemoryDataSize_Byte, 
-        data_buffer_Tx_size + FRAME_CHECK_SIZE
-    );
-    DMA_QuickInit_Periph2Buffer(SPICOMM_SPIx_DMA_Rx_Channel, 
-        (uint32_t)&SPICOMM_SPIx->DR,    DMA_PeripheralDataSize_Byte, 
-        (uint32_t)frame_buffer_Rx,      DMA_MemoryDataSize_Byte, 
-        data_buffer_Rx_size + FRAME_CHECK_SIZE
-    );
+//   // Configure and enable DMA_Rx interrupt
+//    NVIC_QuickInit(SPICOMM_SPIx_DMA_Rx_Channel_IRQn, SPICOMM_SPIx_DMA_PRIO);
+//   // Configure and enable DMA_Tx interrupt
+//    NVIC_QuickInit(SPICOMM_SPIx_DMA_Tx_Channel_IRQn, SPICOMM_SPIx_DMA_PRIO);
+//    
+//    // DMA configuration 
+//    DMA_QuickInit_Buffer2Periph(SPICOMM_SPIx_DMA_Tx_Channel, 
+//        (uint32_t)&SPICOMM_SPIx->DR,    DMA_PeripheralDataSize_Byte, 
+//        (uint32_t)frame_buffer_Tx,      DMA_MemoryDataSize_Byte, 
+//        data_buffer_Tx_size + FRAME_CHECK_SIZE
+//    );
+//    DMA_QuickInit_Periph2Buffer(SPICOMM_SPIx_DMA_Rx_Channel, 
+//        (uint32_t)&SPICOMM_SPIx->DR,    DMA_PeripheralDataSize_Byte, 
+//        (uint32_t)frame_buffer_Rx,      DMA_MemoryDataSize_Byte, 
+//        data_buffer_Rx_size + FRAME_CHECK_SIZE
+//    );
 
-    // SPI configuration
-    SPI_QuickInit(SPICOMM_SPIx, SPI_Mode_Slave);
-    
-    // Enable SPIx Rx and Tx request
-    SPI_I2S_DMACmd(SPICOMM_SPIx, SPI_I2S_DMAReq_Rx | SPI_I2S_DMAReq_Tx, ENABLE);
+//    // SPI configuration
+//    SPI_QuickInit(SPICOMM_SPIx, SPI_Mode_Slave);
+//    
+//    // Enable SPIx Rx and Tx request
+//    SPI_I2S_DMACmd(SPICOMM_SPIx, SPI_I2S_DMAReq_Rx | SPI_I2S_DMAReq_Tx, ENABLE);
 
-    // Enable SPIx Rx and Tx DMA channels interrupt
-    DMA_ITConfig(SPICOMM_SPIx_DMA_Rx_Channel, DMA_IT_HT | DMA_IT_TC | DMA_IT_TE, ENABLE);
-    DMA_ITConfig(SPICOMM_SPIx_DMA_Tx_Channel, DMA_IT_HT | DMA_IT_TC | DMA_IT_TE, ENABLE);
-}
+//    // Enable SPIx Rx and Tx DMA channels interrupt
+//    DMA_ITConfig(SPICOMM_SPIx_DMA_Rx_Channel, DMA_IT_HT | DMA_IT_TC | DMA_IT_TE, ENABLE);
+//    DMA_ITConfig(SPICOMM_SPIx_DMA_Tx_Channel, DMA_IT_HT | DMA_IT_TC | DMA_IT_TE, ENABLE);
+//}
 
 
 /**
@@ -97,7 +97,7 @@ void SPIComm_QuickInit(uint8_t * buffer_Rx, uint8_t * buffer_Tx, size_t buffer_R
  * @retval  None
  */
 void SPIComm_Start(void) {
-   SPI_Start(SPICOMM_SPIx);
+  // SPI_Start(SPICOMM_SPIx);
 }
 
 /**
@@ -105,7 +105,7 @@ void SPIComm_Start(void) {
  * @retval  None
  */
 void SPIComm_Stop(void) {
-   SPI_Stop(SPICOMM_SPIx);
+//   SPI_Stop(SPICOMM_SPIx);
 }
     
 /* Private functions ---------------------------------------------------------*/

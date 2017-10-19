@@ -41,8 +41,8 @@ void turn_stop(void);
 */
 void FrontMotor_QuickInit(void) {
     Motor_QuickInit(FRONT_MOTOR);
-    EXTI_QuickInit(HARD_STOP_GPIO_LEFT, HARD_STOP_PIN_LEFT, HARD_STOP_TRIGGATION, HARD_STOP_PRIORITY);
-    EXTI_QuickInit(HARD_STOP_GPIO_RIGHT, HARD_STOP_PIN_RIGHT, HARD_STOP_TRIGGATION, HARD_STOP_PRIORITY);
+    //EXTI_QuickInit(HARD_STOP_GPIO_LEFT, HARD_STOP_PIN_LEFT, HARD_STOP_TRIGGATION, HARD_STOP_PRIORITY);
+    //EXTI_QuickInit(HARD_STOP_GPIO_RIGHT, HARD_STOP_PIN_RIGHT, HARD_STOP_TRIGGATION, HARD_STOP_PRIORITY);
 }
 
 /**
@@ -66,7 +66,6 @@ void FrontMotor_turn(side_TypeDef direction) {
 		}
 		else {};
 	}
-
 	else {
 		turn_stop();
 	}
