@@ -170,8 +170,8 @@ int can_error_transmit (int id, char *data) {
 void CAN_Send_Speed(void)
 {
 			data_paquet paquet;	
-			//paquet.floatMessage[0] = pDataITF_STM->wheel_speed_L;
-			//paquet.floatMessage[1] = pDataITF_STM->wheel_speed_R;
+			paquet.floatMessage[0] = pDataITF_STM->wheel_speed_L;
+			paquet.floatMessage[1] = pDataITF_STM->wheel_speed_R;
 			CAN_Send(ID_SPEED, paquet.stringMessage);
 			
 }
@@ -208,14 +208,16 @@ void CAN_Send_Wheel_Position(void){
 			data_paquet paquet;
 			paquet.byteMessage[0] = pDataITF_STM->wheel_SENSOR_L;
 			paquet.byteMessage[1] = pDataITF_STM->wheel_SENSOR_R;
-			paquet.byteMessage[2] = pDataITF_STM->battery_level;
+			paquet.byteMessage[2] = pDataITF_STM->steering_stop_sensor_L;
+			paquet.byteMessage[3] = pDataITF_STM->battery_level;
 			CAN_Send(ID_POSITION_OTHER, paquet.stringMessage);
 }
 
 void CAN_Send_Current(void){
 			data_paquet paquet;
-			paquet.byteMessage[0] = pDataITF_STM->motor_current_L;
-			paquet.byteMessage[1] = pDataITF_STM->motor_current_R;
+			paquet.intMessage[0] = pDataITF_STM->motor_current_R;
+			paquet.intMessage[1] = pDataITF_STM->motor_current_L;
+			paquet.intMessage[2] = pDataITF_STM->motor_current_F;
 			CAN_Send(ID_MOTOR_CURRENT, paquet.stringMessage);
 }
 

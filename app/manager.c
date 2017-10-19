@@ -10,6 +10,7 @@
 
 #include "system_time.h"
 
+
 #include "position_sensors.h"
 #include "speed_sensors.h"
 
@@ -18,7 +19,7 @@
 #include "rear_motors.h"
 
 #include "us_sensors.h"
-
+#include "direction.h"
 #include "can.h"
 
 #include "data_interface.h"
@@ -79,7 +80,9 @@ void Manager_Init(void) {
 	
 	  US_QuickInit();
 		US_StartAcq();
-    
+			
+	  Direction_QuickInit();
+	
 		CAN_QuickInit();
     System_Time_QuickInit();
 }

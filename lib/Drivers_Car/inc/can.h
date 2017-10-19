@@ -72,4 +72,5 @@ void CAN_Send_Speed(void);
 void CAN_Send_Front_US(void);
 void CAN_Send_Rear_US(void);
 void CAN_Send_Wheel_Position(void);
+void  CAN_Send_Current(void);
 #endif /* CAN_H_ */

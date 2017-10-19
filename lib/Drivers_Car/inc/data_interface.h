@@ -53,6 +53,7 @@ typedef struct {
 
    uint16_t motor_current_R;            /*!< Right motor current data */
    uint16_t motor_current_L;            /*!<  Left motor current data */
+	 uint16_t motor_current_F;
     
    uint8_t battery_level;               /*!<  Battery level data (in %)*/
 

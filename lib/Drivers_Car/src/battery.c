@@ -9,6 +9,7 @@
 #include "modules_definitions.h"
 #include "common_constants.h"
 #include "adc.h"
+#include "data_interface.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
