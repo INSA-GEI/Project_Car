@@ -64,31 +64,24 @@ void SysTick_Callback(void) {
     // Other periodic functions (every 100 ms)
       if (time_millis % 100 == 0 && CAN_ENABLE==ENABLE) {
 				cpt_envoie++;
-				if(cpt_envoie == 1)
+				if(cpt_envoie == 1){
+					CAN_Send_Wheel_Position();
 					CAN_Send_Distance();
-				if (cpt_envoie==2)
 					CAN_Send_Speed();
-				if (cpt_envoie==3) 
+				}
+				else if (cpt_envoie==2){
 					CAN_Send_Front_US();
-				if ( cpt_envoie ==4)
-					CAN_Send_Rear_US();
-				if(cpt_envoie == 5){
 					pDataITF_STM->motor_current_L=ADC_QuickGet(MOTORS_ADC, REAR_MOTOR_L_CURRENT_RANK);
 					pDataITF_STM->motor_current_R=ADC_QuickGet(MOTORS_ADC, REAR_MOTOR_R_CURRENT_RANK);
 					pDataITF_STM->motor_current_F=ADC_QuickGet(MOTORS_ADC, FRONT_MOTOR_CURRENT_RANK);
 					CAN_Send_Current();
+					CAN_Send_Rear_US();
+					pDataITF_STM->battery_level =  Battery_get();
+					pDataITF_STM->steering_stop_sensor_L = Direction_get();
 				}
-				if (cpt_envoie ==6){
-						CAN_Send_Wheel_Position();
-						pDataITF_STM->battery_level =  Battery_get();
-						pDataITF_STM->steering_stop_sensor_L = Direction_get();
-				}
-					
-				if (cpt_envoie ==7){
-						CAN_Send_Rear_US();
-						cpt_envoie = 0;
-				}
-					
+				else
+					cpt_envoie=0;
+				
 		}
 		    
     // Other periodic functions (every 1 s)

@@ -170,17 +170,16 @@ int can_error_transmit (int id, char *data) {
 void CAN_Send_Speed(void)
 {
 			data_paquet paquet;	
-			paquet.floatMessage[0] = pDataITF_STM->wheel_speed_L;
-			paquet.floatMessage[1] = pDataITF_STM->wheel_speed_R;
+			paquet.intMessage[0] = (uint16_t)(pDataITF_STM->wheel_speed_R*100);
+			paquet.intMessage[1] = (uint16_t)(pDataITF_STM->wheel_speed_L*100);
 			CAN_Send(ID_SPEED, paquet.stringMessage);
 			
 }
 
-void CAN_Send_Distance(void)
-{
+void CAN_Send_Distance(void){
 			data_paquet paquet;	
-			paquet.floatMessage[0] = pDataITF_STM->travelled_distance_L;
-			paquet.floatMessage[1] = pDataITF_STM->travelled_distance_R;
+			paquet.intMessage[0] = (uint16_t)(pDataITF_STM->travelled_distance_R*100);
+			paquet.intMessage[1] = (uint16_t)(pDataITF_STM->travelled_distance_L*100);
 			CAN_Send(ID_DISTANCE, paquet.stringMessage);
 }
 
