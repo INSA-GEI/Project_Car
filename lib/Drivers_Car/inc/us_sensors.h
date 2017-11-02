@@ -16,6 +16,9 @@
 #define Rising_Edge 0x00 
 #define Falling_Edge 0x02
 
+#define IMPAIR 1
+#define PAIR 0
+
 
 #define Circular                  ((uint32_t)0x00000020)		// Circular Mode DMA
 #define Calibration               ((uint32_t)0x00000000) // Normal Mode DMA
@@ -34,14 +37,5 @@ extern struct sensor sensors[6];
  void US_StartAcq(void);
  void US_StopAcq(void);
  
- float US_CalcDistance(uint8_t sensor_position);
- 
-
-
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-
 
 #endif // _US_SENSORS_H

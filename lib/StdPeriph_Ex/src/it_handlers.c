@@ -249,9 +249,9 @@ void TIM3_IRQHandler(void) {
  * @retval None
 */
 
-void TIM4_IRQHandler(void) {
+/*void TIM4_IRQHandler(void) {
     TIM_ITHandler(TIM4);
-}
+}*/
 
 /**
  * @brief  Handles SPI1 interrupt request.
